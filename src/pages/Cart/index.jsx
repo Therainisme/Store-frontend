@@ -34,7 +34,9 @@ export default function Cart() {
                         <List.Item.Meta
                             avatar={<Avatar shape="square" size={100} src="https://joeschmoe.io/api/v1/random" />}
                             title={<a href="https://ant.design">{item.title}</a>}
-                            description={item.description + "\n" + item.price}
+                            description={
+                                <>{item.description} <br /> <br /> {item.price}</>
+                            }
                         />
                         <List.Item
                             actions={[<a key="list-loadmore-more">移出购物车</a>]}
