@@ -42,6 +42,7 @@ export default function Cart() {
                     </List.Item>
                 )}
             />
+            <Button type="primary">创建订单</Button>
         </>
     )
 }

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Input, Space, Button } from 'antd';
+import { Input, Space, Button, message } from 'antd';
 import { Link } from "react-router-dom";
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import axios from 'axios';
 
 export default function Login() {
     const [userName, setUserName] = useState("");
@@ -13,14 +14,23 @@ export default function Login() {
             switch (field) {
                 case "userName": setUserName(data);
                     break;
-                case "password": setPassword(password);
+                case "password": setPassword(data);
                     break;
             }
         }
     }
 
-    function handleLogin() {
-        console.log(userName, password);
+    async function handleLogin() {
+        const { data: response } = await axios.post("/api/user/login", {
+            name: userName,
+            password
+        })
+        if (response.code === -1) {
+            message.error('登陆失败');
+        } else {
+            localStorage.setItem("token", response.data.token)
+            message.info('登陆成功');
+        }
     }
 
     return (

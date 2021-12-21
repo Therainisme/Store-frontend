@@ -23,6 +23,13 @@ export default function CommodityList() {
                 >
                     <Meta
                         title="商品名称"
+                    />
+                    <Meta
+                        title=" "
+                        description="描述描述描述描述描述描述描述描述"
+                    />
+                    <Meta
+                        title=" "
                         description="￥ 250"
                     />
                 </Card>
@@ -40,6 +47,13 @@ export default function CommodityList() {
                 >
                     <Meta
                         title="商品名称"
+                    />
+                    <Meta
+                        title=" "
+                        description="描述描述描述描述描述描述描述描述"
+                    />
+                    <Meta
+                        title=" "
                         description="￥ 250"
                     />
                 </Card>
