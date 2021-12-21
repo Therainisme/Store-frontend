@@ -40,7 +40,7 @@ export default function Login() {
                 iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             />
             <Button type="primary" onClick={handleRegister}>注册</Button>
-            <Link to="/register">已有帐号？点击登陆</Link>
+            <Link to="/login">已有帐号？点击登陆</Link>
         </Space>
     )
 }
