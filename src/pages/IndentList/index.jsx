@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Card } from 'antd';
-import { List, Typography, Divider, Button } from 'antd';
+import { List, Typography, Divider, Button, message } from 'antd';
+import axios from 'axios';
 
 const { Text, Link } = Typography;
 
@@ -12,48 +14,65 @@ const data = [
 ];
 
 export default function IndentList() {
+    const [indentList, setIndentList] = useState([]);
+
+    useEffect(() => {
+        reloadIndentList()
+    }, [])
+
+    async function reloadIndentList() {
+        const { data: response } = await axios.get("/api/indent", {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        });
+        if (response.code < 0) {
+            message.error("获取订单数据失败")
+        }
+        const newIndentList = response.data.map(x => {
+            return {
+                ...x,
+                commodities: JSON.parse(x.commodities)
+            }
+        })
+        console.log(newIndentList);
+        setIndentList(newIndentList)
+    }
+
+    function handleOnClickIndent(indentId) {
+        return async () => {
+            console.log(indentId);
+        }
+    }
+
+
     return (
         <div className="site-card-border-less-wrapper">
-            <Card title="创建于 2021年12月21日" bordered={false} extra={<Button type="primary" >删除</Button>}>
-                <>
-                    <List
-                        bordered
-                        dataSource={data}
-                        renderItem={item => (
-                            <List.Item>
-                                <Text>
-                                    <Typography.Text mark>[已支付]
-                                    </Typography.Text>
-                                    <Text>这里肯定是商品名称了</Text>
-                                    <Text type="secondary">这里肯定是商品数量了</Text>
-                                </Text>
+            {indentList.map(x => (
+                <Card title={`创建于 ${new Date(x.createTime).toLocaleString()}`} bordered={false} key={x.id} extra={
+                    <Button type="primary" onClick={handleOnClickIndent(x.id)}>删除</Button>
+                }>
+                    <>
+                        <List
+                            bordered
+                            dataSource={x.commodities}
+                            renderItem={item => (
+                                <List.Item>
+                                    <Text>
+                                        <Typography.Text mark>[已支付] 
+                                        </Typography.Text>
+                                        <Text>&nbsp;&nbsp;{item.name}&nbsp;&nbsp;</Text>
+                                        <Text type="secondary">{item.description}</Text>
+                                    </Text>
 
-                                <Text type="strong">￥ 250.00</Text>
+                                    <Text type="strong">￥ {item.price}</Text>
 
-                            </List.Item>
-                        )}
-                    />
-                </>
-            </Card>
-            <Card title="创建于 2021年12月21日" bordered={false} extra={<Button type="primary" >删除</Button>}>
-                <List
-                    bordered
-                    dataSource={data}
-                    renderItem={item => (
-                        <List.Item>
-                            <Text>
-                                <Typography.Text mark>[已支付]
-                                </Typography.Text>
-                                <Text>这里肯定是商品名称了</Text>
-                                <Text type="secondary">这里肯定是商品数量了</Text>
-                            </Text>
-
-                            <Text type="strong">￥ 250.00</Text>
-
-                        </List.Item>
-                    )}
-                />
-            </Card>
+                                </List.Item>
+                            )}
+                        />
+                    </>
+                </Card>
+            ))}
         </div>
     )
 }

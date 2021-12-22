@@ -21,7 +21,7 @@ export default function Login() {
             }
         }
     }
-    
+
     function handleRegister() {
         console.log(userName, password, rpassword)
     }
@@ -39,8 +39,10 @@ export default function Login() {
                 onChange={handleInput("rpassword")}
                 iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             />
-            <Button type="primary" onClick={handleRegister}>注册</Button>
-            <Link to="/login">已有帐号？点击登陆</Link>
+            <span>
+                <Button type="primary" onClick={handleRegister}>注册</Button> &nbsp;
+                <Link to="/login">已有帐号？点击登陆</Link>
+            </span>
         </Space>
     )
 }
