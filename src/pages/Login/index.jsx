@@ -27,7 +27,7 @@ export default function Login({ isLogin, setIsLogin }) {
             password
         })
         if (response.code === -1) {
-            message.error('登陆失败');
+            message.error(`登陆失败，用户或密码不存在`);
         } else {
             localStorage.setItem("token", response.data.token)
             setIsLogin(true);

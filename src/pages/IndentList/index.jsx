@@ -15,7 +15,7 @@ const data = [
     'Los Angeles battles huge wildfires.',
 ];
 
-export default function IndentList({setLoading}) {
+export default function IndentList({ setLoading }) {
     const [indentList, setIndentList] = useState([]);
 
     useEffect(() => {
@@ -63,12 +63,21 @@ export default function IndentList({setLoading}) {
         }
     }
 
+    function getIndentMoney(commodities) {
+        return commodities.reduce((pre, now) => {
+            return pre + now.price * now.num;
+        }, 0)
+    }
+
 
     return (
         <div className="site-card-border-less-wrapper">
             {indentList.length > 0 ? indentList.map(x => (
                 <Card title={`创建于 ${new Date(x.createTime).toLocaleString()}`} bordered={false} key={x.id} extra={
-                    <Button type="primary" onClick={handleOnClickIndent(x.id)}>取消该订单</Button>
+                    <span>
+                        <span>总金额：￥ {getIndentMoney(x.commodities)}</span> &nbsp;&nbsp;&nbsp; 
+                        <Button type="primary" onClick={handleOnClickIndent(x.id)} disabled={x.status === 1}>取消该订单</Button>
+                    </span>
                 }>
                     <>
                         <List

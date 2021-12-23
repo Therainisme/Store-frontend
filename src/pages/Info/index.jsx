@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Descriptions, Badge, Modal, Input, message } from 'antd';
+import { Descriptions, Badge, Modal, Input, message, notification } from 'antd';
 import styles from "./index.module.css";
 import axios from 'axios';
 
-export default function Info({setLoading}) {
+export default function Info({ setLoading }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [fieldName, setFieldName] = useState("");
     const [fieldOldValue, setFieldOldValue] = useState("");
@@ -28,7 +28,7 @@ export default function Info({setLoading}) {
         console.log(fieldNewValue, fieldClickKey);
         console.log(userInfo);
         const newUserInfo = { ...userInfo, [fieldClickKey]: fieldNewValue };
-        const {data: response} = await axios.post("/api/user/modify", {...newUserInfo})
+        const { data: response } = await axios.post("/api/user/modify", { ...newUserInfo })
         if (response.code < 0) {
             message.error("修改个人信息失败");
         } else {
@@ -60,12 +60,17 @@ export default function Info({setLoading}) {
         }
         setUserInfo(response.data)
         setLoading(false)
+        notification.open({
+            message: '提示',
+            description:
+                '可以双击对应信息可以进行修改',
+        })
     }
 
     return (
         <>
 
-            <Descriptions title=" " bordered>
+            <Descriptions title=" " bordered >
                 <Descriptions.Item label="用户名" onClick={showModal} >
                     <span onDoubleClick={showModal(["用户名", "userAccount"])} className={styles.fieldValue}>
                         {userInfo.userAccount}
