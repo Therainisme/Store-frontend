@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Card } from 'antd';
-import { List, Typography, Divider, Button, message } from 'antd';
+import { List, Typography, Divider, Button, Result, message } from 'antd';
+import { Link } from "react-router-dom";
 import axios from 'axios';
 import styles from "./index.module.css";
 
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 const data = [
     'Racing car sprays burning fuel into crowd.',
@@ -14,7 +15,7 @@ const data = [
     'Los Angeles battles huge wildfires.',
 ];
 
-export default function IndentList() {
+export default function IndentList({setLoading}) {
     const [indentList, setIndentList] = useState([]);
 
     useEffect(() => {
@@ -22,13 +23,16 @@ export default function IndentList() {
     }, [])
 
     async function reloadIndentList() {
+        setLoading(true)
         const { data: response } = await axios.get("/api/indent", {
             headers: {
                 token: localStorage.getItem("token")
             }
         });
         if (response.code < 0) {
-            message.error("获取订单数据失败")
+            message.error(`获取订单数据失败, ${response.msg}`)
+            setLoading(false)
+            return;
         }
         const newIndentList = response.data.map(x => {
             return {
@@ -36,14 +40,14 @@ export default function IndentList() {
                 commodities: JSON.parse(x.commodities)
             }
         })
-        console.log(newIndentList);
+        setLoading(false)
         setIndentList(newIndentList)
     }
 
     function handleOnClickIndent(indentId) {
         return async () => {
             console.log(indentId);
-            const {data: response} = await axios.post("/api/indent/cancel", {
+            const { data: response } = await axios.post("/api/indent/cancel", {
                 indentId
             }, {
                 headers: {
@@ -62,7 +66,7 @@ export default function IndentList() {
 
     return (
         <div className="site-card-border-less-wrapper">
-            {indentList.map(x => (
+            {indentList.length > 0 ? indentList.map(x => (
                 <Card title={`创建于 ${new Date(x.createTime).toLocaleString()}`} bordered={false} key={x.id} extra={
                     <Button type="primary" onClick={handleOnClickIndent(x.id)}>取消该订单</Button>
                 }>
@@ -89,7 +93,18 @@ export default function IndentList() {
                         />
                     </>
                 </Card>
-            ))}
+            )) :
+                (
+                    <Result
+                        title="你现在还没有下过单！"
+                        extra={
+                            <Button type="primary" key="console">
+                                <Link to="/">去购物</Link>
+                            </Button>
+                        }
+                    />
+                )
+            }
         </div>
     )
 }

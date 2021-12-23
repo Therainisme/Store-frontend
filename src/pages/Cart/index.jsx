@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { List, Avatar, Button, Skeleton, message } from 'antd';
+import { List, Avatar, Button, Skeleton, message, Result } from 'antd';
+import { Link } from "react-router-dom";
 import axios from 'axios';
 
-export default function Cart() {
+export default function Cart({setLoading}) {
     const [cartList, setCartList] = useState([]);
     const [cartId, setCartId] = useState("");
 
@@ -11,6 +12,7 @@ export default function Cart() {
     }, []);
 
     async function updateCartList() {
+        setLoading(true)
         const { data: response } = await axios.get("/api/user/cart", {
             headers: {
                 token: localStorage.getItem("token")
@@ -18,11 +20,12 @@ export default function Cart() {
         });
         if (response.code < 0) {
             message.error(`获取购物车列表失败：${response.msg}`)
+            setLoading(false)
             return
         }
         setCartId(response.data.id)
         setCartList(JSON.parse(response.data.commodities))
-        console.log(cartList)
+        setLoading(false)
     }
 
 
@@ -81,13 +84,13 @@ export default function Cart() {
         }
     }
 
-    return (
+    return cartList.length > 0 ? (
         <>
             <List
                 itemLayout="horizontal"
                 dataSource={cartList}
                 renderItem={item => (
-                    <List.Item>
+                    <List.Item style={{margin: "10px"}}>
                         <List.Item.Meta
                             avatar={<Avatar shape="square" size={100} src={item.cover} />}
                             title={<a href="https://ant.design">{item.name}</a>}
@@ -103,9 +106,15 @@ export default function Cart() {
                     </List.Item>
                 )}
             />
-            {
-                cartList.length > 0 ? <Button type="primary" onClick={handleCreateIndent}>创建订单</Button> : ""
+            <Button type="primary" onClick={handleCreateIndent} style={{margin: "10px"}}>创建订单</Button>
+        </>)
+        :
+        <Result
+            title="快去商品页寻找你喜欢的商品吧！"
+            extra={
+                <Button type="primary" key="console">
+                    <Link to="/">去购物</Link>
+                </Button>
             }
-        </>
-    )
+        />
 }

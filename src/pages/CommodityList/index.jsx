@@ -3,35 +3,43 @@ import { Card, Avatar, message } from 'antd';
 import styles from './index.module.css';
 import { ShoppingCartOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const { Meta } = Card;
 
-const list = [
-    {
-        id: 1,
-        cover: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-        name: "商品名称",
-        description: "描述描述描述描述描述描述描述描述",
-        price: "250"
-    },
-]
-
-export default function CommodityList() {
+export default function CommodityList({setLoading}) {
     const [commodityList, setCommodityList] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async function () {
+            setLoading(true)
             const { data: response } = await axios.get("/api/commodity/list?page=0");
             const { data, code, msg } = response;
             if (code === 0) {
                 console.log(data);
                 setCommodityList(data)
             }
+            setLoading(false)
         }())
     }, []);
 
     function addToCart(commodityId) {
         return async () => {
+            if (localStorage.getItem("token") === null) {
+                message.info("请先登陆");
+                navigate("/login");
+                return
+            } else {
+                const token = localStorage.getItem("token");
+                const { data: response } = await axios.get(`/api/user/checkToken?token=${token}`);
+                if (response.code === -100) {
+                    message.info("请先登陆");
+                    navigate("/login")
+                    return
+                }
+            }
+
             // 获取用户的购物车 id
             const { data: response } = await axios.get("/api/user/cart", {
                 headers: {

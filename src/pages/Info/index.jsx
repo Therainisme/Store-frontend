@@ -3,7 +3,7 @@ import { Descriptions, Badge, Modal, Input, message } from 'antd';
 import styles from "./index.module.css";
 import axios from 'axios';
 
-export default function Info() {
+export default function Info({setLoading}) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [fieldName, setFieldName] = useState("");
     const [fieldOldValue, setFieldOldValue] = useState("");
@@ -47,21 +47,25 @@ export default function Info() {
     }, [])
 
     async function reloadUserInfo() {
+        setLoading(true)
         const { data: response } = await axios.get("/api/user/info", {
             headers: {
                 token: localStorage.getItem("token")
             }
         })
         if (response.code < 0) {
-            message.error("获取个人信息失败")
+            message.error(`获取个人信息失败, ${response.msg}`)
+            setLoading(false)
+            return
         }
         setUserInfo(response.data)
+        setLoading(false)
     }
 
     return (
         <>
 
-            <Descriptions title="欢迎您" bordered>
+            <Descriptions title=" " bordered>
                 <Descriptions.Item label="用户名" onClick={showModal} >
                     <span onDoubleClick={showModal(["用户名", "userAccount"])} className={styles.fieldValue}>
                         {userInfo.userAccount}
@@ -108,8 +112,8 @@ export default function Info() {
             </Descriptions>
             <Modal title="修改信息" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                 <p>请输入新的{fieldName}</p>
-                <Input disabled placeholder="Basic usage" value={fieldOldValue} />
-                <Input placeholder="Basic usage" value={fieldNewValue} onChange={handleFieldNewValueChange} />
+                <Input disabled placeholder="" value={fieldOldValue} />
+                <Input autoFocus placeholder="" value={fieldNewValue} onChange={handleFieldNewValueChange} />
             </Modal>
         </>
     )

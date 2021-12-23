@@ -1,13 +1,33 @@
 import { useState } from 'react'
-import { Link } from "react-router-dom";
-import { Menu, Button } from 'antd';
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, Button, message } from 'antd';
 import { MailOutlined, LoginOutlined, ShoppingCartOutlined, UnorderedListOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
-export default function MyMenu({isLogin, setIsLogin}) {
-    const [current, setCurrent] = useState();
+function MyMenu({ isLogin, setIsLogin }) {
+    const navigate = useNavigate();
 
-    function handleClick(e) {
+    const [current, setCurrent] = useState("index");
+
+    async function handleClick(e) {
+
         setCurrent(e.key)
+        if (e.key === "cart" || e.key === "indent" || e.key === "info") {
+            if (localStorage.getItem("token") === null) {
+                setIsLogin(false);
+                message.error("未登录，请先登陆")
+                setCurrent("login")
+                navigate("/login")
+            } else {
+                const token = localStorage.getItem("token");
+                const { data: response } = await axios.get(`/api/user/checkToken?token=${token}`);
+                if (response.code === -100) {
+                    setIsLogin(false);
+                    setCurrent("login")
+                    navigate("/login")
+                }
+            }
+        }
     }
 
     function handleLogout() {
@@ -37,3 +57,5 @@ export default function MyMenu({isLogin, setIsLogin}) {
         </>
     )
 }
+
+export default MyMenu;
