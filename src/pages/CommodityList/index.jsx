@@ -32,15 +32,36 @@ export default function CommodityList() {
 
     function addToCart(commodityId) {
         return async () => {
-            // 获取商品详细信息
-            const {data: commodityResponse} = await axios.post(`/api/commodity/detail?id=${commodityId}`)
-            if (commodityResponse.code === -1) {
+            // 获取用户的购物车 id
+            const { data: response } = await axios.get("/api/user/cart", {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            });
+            if (response.code < 0) {
                 message.error("添加失败");
                 return;
             }
-            const commodityString = JSON.stringify(commodityResponse.data)
-            console.log(commodityString);
-            // todo
+            const cartId = response.data.id;
+            const commodityList = JSON.parse(response.data.commodities);
+            let theNum = 0;
+            commodityList.forEach(x => {
+                if (x.id === commodityId) theNum = x.num;
+            })
+            // 添加
+            const { data: addResponse } = await axios.post("/api/cart/add", {
+                commodityId, cartId, num: 1
+            }, {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            })
+            if (addResponse < 0) {
+                message.error("添加失败")
+                return;
+            } else {
+                message.info("添加成功")
+            }
         }
     }
 
@@ -52,7 +73,7 @@ export default function CommodityList() {
                         return (
                             <Card
                                 key={x.id}
-                                style={{ width: 300 }}
+                                style={{ width: 300, marginTop: "10px" }}
                                 cover={
                                     <img
                                         height={250}

@@ -1,0 +1,5 @@
+.np {
+    display: flex;
+    min-width: 120px;
+    justify-content: space-between;
+}

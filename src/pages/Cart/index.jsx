@@ -2,31 +2,9 @@ import { useState, useEffect } from 'react';
 import { List, Avatar, Button, Skeleton, message } from 'antd';
 import axios from 'axios';
 
-const data = [
-    {
-        title: '商品名称',
-        description: "这里是商品描述",
-        price: "￥ 9.9"
-    },
-    {
-        title: '商品名称',
-        description: "这里是商品描述",
-        price: "￥ 9.9"
-    },
-    {
-        title: '商品名称',
-        description: "这里是商品描述",
-        price: "￥ 9.9"
-    },
-    {
-        title: '商品名称',
-        description: "这里是商品描述",
-        price: "￥ 9.9"
-    },
-];
-
 export default function Cart() {
     const [cartList, setCartList] = useState([]);
+    const [cartId, setCartId] = useState("");
 
     useEffect(() => {
         updateCartList()
@@ -42,13 +20,64 @@ export default function Cart() {
             message.error(`获取购物车列表失败：${response.msg}`)
             return
         }
+        setCartId(response.data.id)
         setCartList(JSON.parse(response.data.commodities))
         console.log(cartList)
     }
 
+
+    async function handleCreateIndent() {
+        const { data: response } = await axios.post("/api/indent/create", {
+            commodities: cartList
+        }, {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        });
+        if (response.code < 0) {
+            message.error("创建订单失败")
+            return
+        }
+        const { data: removeCartResponse } = await axios.post("/api/cart/removeAll", {
+            cartId
+        }, {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        })
+        if (response.code < 0) {
+            message.error("清空购物车失败");
+            return;
+        }
+        message.info("创建订单成功")
+        updateCartList();
+    }
+
     function removeFromCart(itemId) {
         return async () => {
-            console.log(itemId);
+            const { data: response } = await axios.get("/api/user/cart", {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            });
+            if (response.code < 0) {
+                message.error(`移除商品失败`)
+                return
+            }
+            const { data: removeResponse } = await axios.post("/api/cart/delete", {
+                cartId: response.data.id,
+                commodityId: itemId
+            }, {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            });
+            if (removeResponse.code < 0) {
+                message.error(`移除商品失败`)
+                return
+            }
+            message.info("移除商品成功")
+            updateCartList()
         }
     }
 
@@ -63,7 +92,7 @@ export default function Cart() {
                             avatar={<Avatar shape="square" size={100} src={item.cover} />}
                             title={<a href="https://ant.design">{item.name}</a>}
                             description={
-                                <>{item.description} <br /> 数量：{"8"} <br /> {item.price}</>
+                                <>{item.description} <br /> 数量： {item.num} <br /> ￥ {item.price}</>
                             }
                         />
                         <List.Item
@@ -74,7 +103,9 @@ export default function Cart() {
                     </List.Item>
                 )}
             />
-            <Button type="primary">创建订单</Button>
+            {
+                cartList.length > 0 ? <Button type="primary" onClick={handleCreateIndent}>创建订单</Button> : ""
+            }
         </>
     )
 }
