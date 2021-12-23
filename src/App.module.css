@@ -1,0 +1,17 @@
+.container {
+    width: 70vw;
+}
+
+.fatherContainer {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 30vh;
+}
+
+.spinContainer {
+    width: 100vw;
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

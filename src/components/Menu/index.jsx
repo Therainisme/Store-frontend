@@ -1,16 +1,26 @@
 import { useState } from 'react'
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, Button, message } from 'antd';
 import { MailOutlined, LoginOutlined, ShoppingCartOutlined, UnorderedListOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 function MyMenu({ isLogin, setIsLogin }) {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [current, setCurrent] = useState("index");
 
-    async function handleClick(e) {
+    useEffect(() => {
+        const {pathname} = location;
+        if (pathname === "/") setCurrent("index")
+        if (pathname === "/cart") setCurrent("cart")
+        if (pathname === "/indent") setCurrent("/indent")
+        if (pathname === "/info") setCurrent("info")
+        if (pathname === "/login") setCurrent("/login")
+    });
 
+    async function handleClick(e) {
         setCurrent(e.key)
         if (e.key === "cart" || e.key === "indent" || e.key === "info") {
             if (localStorage.getItem("token") === null) {

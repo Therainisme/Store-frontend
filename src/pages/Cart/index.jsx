@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { List, Avatar, Button, Skeleton, message, Result } from 'antd';
 import { Link } from "react-router-dom";
 import axios from 'axios';
+import styles from "./index.module.css";
 
-export default function Cart({setLoading}) {
+export default function Cart({ setLoading }) {
     const [cartList, setCartList] = useState([]);
     const [cartId, setCartId] = useState("");
 
@@ -84,37 +85,41 @@ export default function Cart({setLoading}) {
         }
     }
 
-    return cartList.length > 0 ? (
-        <>
-            <List
-                itemLayout="horizontal"
-                dataSource={cartList}
-                renderItem={item => (
-                    <List.Item style={{margin: "10px"}}>
-                        <List.Item.Meta
-                            avatar={<Avatar shape="square" size={100} src={item.cover} />}
-                            title={<a href="https://ant.design">{item.name}</a>}
-                            description={
-                                <>{item.description} <br /> 数量： {item.num} <br /> ￥ {item.price}</>
-                            }
-                        />
-                        <List.Item
-                            actions={[
-                                <a key={`remove${item.id}`} onClick={removeFromCart(item.id)}>移出购物车</a>
-                            ]}
-                        ></List.Item>
-                    </List.Item>
-                )}
-            />
-            <Button type="primary" onClick={handleCreateIndent} style={{margin: "10px"}}>创建订单</Button>
-        </>)
-        :
-        <Result
-            title="快去商品页寻找你喜欢的商品吧！"
-            extra={
-                <Button type="primary" key="console">
-                    <Link to="/">去购物</Link>
-                </Button>
-            }
-        />
+    return (
+        <div className={styles.container}>
+            {cartList.length > 0 ? (
+                <>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={cartList}
+                        renderItem={item => (
+                            <List.Item style={{ margin: "10px" }}>
+                                <List.Item.Meta
+                                    avatar={<Avatar shape="square" size={100} src={item.cover} />}
+                                    title={<a href="https://ant.design">{item.name}</a>}
+                                    description={
+                                        <>{item.description} <br /> 数量： {item.num} <br /> ￥ {item.price}</>
+                                    }
+                                />
+                                <List.Item
+                                    actions={[
+                                        <a key={`remove${item.id}`} onClick={removeFromCart(item.id)}>移出购物车</a>
+                                    ]}
+                                ></List.Item>
+                            </List.Item>
+                        )}
+                    />
+                    <Button type="primary" onClick={handleCreateIndent} style={{ margin: "10px" }}>创建订单</Button>
+                </>)
+                :
+                <Result
+                    title="快去商品页寻找你喜欢的商品吧！"
+                    extra={
+                        <Button type="primary" key="console">
+                            <Link to="/">去购物</Link>
+                        </Button>
+                    }
+                />}
+        </div>
+    )
 }

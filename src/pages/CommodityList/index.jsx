@@ -81,7 +81,7 @@ export default function CommodityList({setLoading}) {
                         return (
                             <Card
                                 key={x.id}
-                                style={{ width: 300, marginTop: "10px" }}
+                                className={styles.card}
                                 cover={
                                     <img
                                         height={250}

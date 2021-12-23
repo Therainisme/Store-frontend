@@ -21,6 +21,7 @@ export default function Info({ setLoading }) {
             setFieldName(clickFieldName)
             setFieldOldValue(e.target.innerText)
             setFieldClickKey(clickFieldKey)
+            setFieldNewValue("")
         }
     };
 
@@ -69,8 +70,7 @@ export default function Info({ setLoading }) {
 
     return (
         <>
-
-            <Descriptions title=" " bordered >
+            <Descriptions title=" " bordered className={styles.container}>
                 <Descriptions.Item label="用户名" onClick={showModal} >
                     <span onDoubleClick={showModal(["用户名", "userAccount"])} className={styles.fieldValue}>
                         {userInfo.userAccount}

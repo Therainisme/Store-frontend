@@ -8,7 +8,11 @@ import IndentList from "./pages/IndentList";
 import Info from "./pages/Info";
 import ServiceContainer from "./components/ServiceContainer";
 import { useState } from 'react';
-import { Skeleton } from 'antd';
+import { Skeleton, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import styles from "./App.module.css";
+
+const antIcon = <LoadingOutlined style={{ fontSize: 60 }} spin />;
 
 export default function App() {
     const [isLogin, setIsLogin] = useState(() => {
@@ -21,24 +25,30 @@ export default function App() {
     return (
         <>
             <MyMenu isLogin={isLogin} setIsLogin={setIsLogin} />
-            {loading ? <Skeleton active /> : ""}
-            <span style={loading ? { visibility: "hidden" } : {}}>
-                <Routes>
-                    <Route path="/" element={<CommodityList setLoading={setLoading}/>} />
-                    <Route path="/cart" element={<Cart setLoading={setLoading} />} />
-                    <Route path="/indent" element={<IndentList setLoading={setLoading} />} />
-                    <Route path="/info" element={<Info setLoading={setLoading} />} />
-                    <Route path="/login" element={
-                        <ServiceContainer>
-                            <Login isLogin={isLogin} setIsLogin={setIsLogin} />
-                        </ServiceContainer>
-                    } />
-                    <Route path="/register" element={
-                        <ServiceContainer>
-                            <Register isLogin={isLogin} setIsLogin={setIsLogin} />
-                        </ServiceContainer>
-                    } />
-                </Routes>
+            {loading ?
+                <div className={styles.spinContainer}>
+                    <Spin indicator={antIcon} />
+                </div>
+                : ""}
+            <span className={styles.fatherContainer}>
+                <div className={styles.container} style={loading ? { visibility: "hidden" } : {}}>
+                    <Routes>
+                        <Route path="/" element={<CommodityList setLoading={setLoading} />} />
+                        <Route path="/cart" element={<Cart setLoading={setLoading} />} />
+                        <Route path="/indent" element={<IndentList setLoading={setLoading} />} />
+                        <Route path="/info" element={<Info setLoading={setLoading} />} />
+                        <Route path="/login" element={
+                            <ServiceContainer>
+                                <Login isLogin={isLogin} setIsLogin={setIsLogin} />
+                            </ServiceContainer>
+                        } />
+                        <Route path="/register" element={
+                            <ServiceContainer>
+                                <Register isLogin={isLogin} setIsLogin={setIsLogin} />
+                            </ServiceContainer>
+                        } />
+                    </Routes>
+                </div>
             </span>
         </>
     );

@@ -71,7 +71,7 @@ export default function IndentList({ setLoading }) {
 
 
     return (
-        <div className="site-card-border-less-wrapper">
+        <div className={`${styles.container} site-card-border-less-wrapper`}>
             {indentList.length > 0 ? indentList.map(x => (
                 <Card title={`创建于 ${new Date(x.createTime).toLocaleString()}`} bordered={false} key={x.id} extra={
                     <span>
