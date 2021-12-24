@@ -1,11 +1,20 @@
 .container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .card {
     width: 300px;
     margin-top: 40px !important;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+}
+
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    margin-top: 40px !important;
 }

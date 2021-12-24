@@ -2,6 +2,12 @@
     width: 70vw;
 }
 
+@media (max-width: 475px) {
+    .container {
+        width: 100vw;
+    }
+}
+
 .fatherContainer {
     display: flex;
     justify-content: center;
