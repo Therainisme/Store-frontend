@@ -94,7 +94,7 @@ export default function CommodityList({ setLoading }) {
                                 className={styles.card}
                                 cover={
                                     <img
-                                        height={280}
+                                        // height={280}
                                         alt="example"
                                         src={x.cover}
                                     />

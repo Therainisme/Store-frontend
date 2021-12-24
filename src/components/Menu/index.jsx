@@ -15,9 +15,9 @@ function MyMenu({ isLogin, setIsLogin }) {
         const {pathname} = location;
         if (pathname === "/") setCurrent("index")
         if (pathname === "/cart") setCurrent("cart")
-        if (pathname === "/indent") setCurrent("/indent")
+        if (pathname === "/indent") setCurrent("indent")
         if (pathname === "/info") setCurrent("info")
-        if (pathname === "/login") setCurrent("/login")
+        if (pathname === "/login") setCurrent("login")
     });
 
     async function handleClick(e) {
